@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ArtistInfoSearcher": {
+      "commandName": "Project",
+      "commandLineArgs": "RequestArtist \"Papa Roach\""
+    }
+  }
+}
