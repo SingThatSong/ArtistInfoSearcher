@@ -14,8 +14,6 @@ public class Program
 
     public void RequestArtist(string name)
     {
-        new DiscogsService().GetArtistID(name);
-
         var musicBrainzService = new MusicBrainzService();
 
         var musicBrainzID = musicBrainzService.GetMusicBrainzID(name);
