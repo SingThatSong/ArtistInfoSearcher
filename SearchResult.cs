@@ -1,4 +1,6 @@
-﻿public class SearchResult
+﻿namespace ArtistInfoSearcher;
+
+public class SearchResult
 {
     public List<Entity>? Albums { get; set; }
     public List<Entity>? EPs { get; set; }

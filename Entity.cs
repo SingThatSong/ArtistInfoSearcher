@@ -1,4 +1,4 @@
-﻿using ArtistInfoSearcher;
+﻿namespace ArtistInfoSearcher;
 
 public class Entity
 {
@@ -10,5 +10,5 @@ public class Entity
 
     public int? Year { get; set; }
     public string Title { get; set; }
-    public ServiceType ServiceType { get; set; }
+    public ServiceType? ServiceType { get; set; }
 }

@@ -1,7 +1,8 @@
-﻿namespace ArtistInfoSearcher
+﻿namespace ArtistInfoSearcher;
+
+[Flags]
+public enum ServiceType
 {
-    public enum ServiceType
-    {
-        Musicbrainz
-    }
+    Itunes      = 1 << 0,
+    Musicbrainz = 1 << 1
 }
