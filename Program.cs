@@ -15,14 +15,7 @@ public class Program
     public void RequestArtist(string name)
     {
         var musicBrainzService = new MusicBrainzService();
-
-        var musicBrainzID = musicBrainzService.GetMusicBrainzID(name);
-        Console.WriteLine($"{name} {musicBrainzID}");
-
-        var result = new SearchResult();
-        result.Albums  = musicBrainzService.GetAllAlbums(musicBrainzID);
-        result.EPs     = musicBrainzService.GetAllEPs(musicBrainzID);
-        result.Singles = musicBrainzService.GetAllSingles(musicBrainzID);
+        var result = musicBrainzService.GetSearchResult(name);
 
         ConsoleTableBuilder
             .From(result.Albums)

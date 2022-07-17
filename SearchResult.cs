@@ -3,4 +3,5 @@
     public List<Entity>? Albums { get; set; }
     public List<Entity>? EPs { get; set; }
     public List<Entity>? Singles { get; set; }
+    public List<Entity>? AllTracks { get; set; }
 }
