@@ -22,7 +22,19 @@ public class Program
 
         var results = new ConcurrentBag<SearchResult>();
 
-        Parallel.ForEach(dataServices, x => results.Add(x.GetSearchResultAsync(name).Result));
+        Parallel.ForEach(dataServices, x =>
+        {
+            Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {x.GetType().Name} Started");
+            try
+            {
+                results.Add(x.GetSearchResultAsync(name).Result);
+            }
+            catch
+            {
+                Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {x.GetType().Name} Failed");
+            }
+            Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} {x.GetType().Name} Finished");
+        });
 
         ConsoleTableBuilder
             .From(GroupResults(results.SelectMany(x => x.Albums ?? Enumerable.Empty<Entity>())))
@@ -40,20 +52,66 @@ public class Program
             .ExportAndWriteLine();
     }
 
-    private List<Entity> GroupResults(IEnumerable<Entity> enumerable)
+    private List<ResultEntity> GroupResults(IEnumerable<Entity> enumerable)
     {
-        var groupedByName = enumerable.GroupBy(x => x.Title + x.Year);
-
-        return groupedByName.Select(x =>
+        var groupedByName = enumerable.GroupBy(x =>
         {
-            var result = new Entity(x.First().Title, x.First().Year);
+            var result = x.Title.Replace(" ", "")
+                                .Replace(",", "")
+                                .Replace(":", "")
+                                .Replace(".", "")
+                                .Replace("!", "")
+                                .Replace("?", "")
+                                .ToLowerInvariant();
 
-            x.ToList().ForEach(x => result.ServiceType = result.ServiceType.HasValue 
-                                                            ? result.ServiceType | x.ServiceType 
-                                                            : x.ServiceType);
+            var index = result.IndexOfAny(new[] { '[', '(' });
+
+            if (index > 0)
+            {
+                return result.Substring(0, index).Trim('.', '!', '?', ' ');
+            }
+            else
+            {
+                return result;
+            }
+        });
+
+        return groupedByName.Select(group =>
+        {
+            var result = new ResultEntity();
+
+            foreach (var entry in group)
+            {
+                var existingYear = result.Years.FirstOrDefault(x => x.Year == entry.Year);
+
+                if (existingYear != default)
+                {
+                    existingYear.Type.Add(entry.ServiceType!.Value.ToString());
+                }
+                else
+                {
+                    result.Years.Add((entry.Year!.Value, new List<string>() { entry.ServiceType!.Value.ToString() }));
+                }
+
+                var existingTitle = result.Titles.FirstOrDefault(x => x.Title == entry.Title);
+
+                if (existingTitle != default)
+                {
+                    existingTitle.Type.Add(entry.ServiceType!.Value.ToString());
+                }
+                else
+                {
+                    result.Titles.Add((entry.Title, new List<string>() { entry.ServiceType!.Value.ToString() }));
+                }
+
+                result.Services = result.Services.HasValue
+                                    ? result.Services | entry.ServiceType
+                                    : entry.ServiceType;
+            }
+
             return result;
         })
-            .OrderByDescending(x => x.Year)
+            .OrderByDescending(x => x.Years.Min(y => y.Year))
             .ToList();
     }
 

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -19,8 +19,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="C:\Users\maxim\.nuget\packages\km.yandex.music.api\1.0.0\contentFiles\any\net5.0\README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommandDotNet" Version="7.0.1" />
     <PackageReference Include="ConsoleTableExt" Version="3.2.0" />
+    <PackageReference Include="CXuesong.MW.WikiClientLibrary" Version="0.8.0-int.6" />
+    <PackageReference Include="Genius.NET" Version="4.0.1" />
     <PackageReference Include="KM.Yandex.Music.Api" Version="1.0.0" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="5.0.0" />
   </ItemGroup>

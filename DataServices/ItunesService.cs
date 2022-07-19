@@ -31,7 +31,7 @@ public class ItunesService : DataService
                                            .ToList();
 
             result.EPs.ForEach(x => x.Title = x.Title.Remove(x.Title.IndexOf(" - EP")));
-            result.EPs = result.Singles.DistinctBy(x => x.Title)
+            result.EPs = result.EPs.DistinctBy(x => x.Title)
                                        .ToList();
 
             result.Albums = result.Albums.DistinctBy(x => x.Title).ToList();
