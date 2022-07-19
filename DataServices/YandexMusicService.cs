@@ -1,5 +1,4 @@
-﻿using ArtistInfoSearcher;
-using MetaBrainz.MusicBrainz;
+﻿using MetaBrainz.MusicBrainz;
 using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using MetaBrainz.MusicBrainz.Interfaces.Searches;
 using System.Text.Json;
@@ -8,7 +7,7 @@ using Yandex.Music.Api;
 using Yandex.Music.Api.Common;
 using Yandex.Music.Api.Models.Account;
 
-namespace ArtistInfoSearcher;
+namespace ArtistInfoSearcher.DataServices;
 
 public class YandexMusicService : DataService
 {
@@ -18,14 +17,15 @@ public class YandexMusicService : DataService
     {
         var api = new YandexMusicApi();
         var auth = new AuthStorage();
-        await api.User.AuthorizeAsync(auth, "", "");
+        await api.User.AuthorizeAsync(auth, "grish1n.m4x", "mIuTkw9vXMHyheXvUdqz");
         var searchResult = await api.Search.ArtistAsync(auth, artistName);
 
-        if (searchResult.Result.Artists == null) return new SearchResult();
-        
+        var artistID = searchResult.Result.Artists?.Results.FirstOrDefault(x => x.Name == artistName)?.Id;
+        if (artistID == null) return new SearchResult();
+
         var httpClient = new HttpClient(new SocketsHttpHandler());
 
-        var answer = await httpClient.GetStringAsync($"https://music.yandex.ru/handlers/artist.jsx?artist={searchResult.Result.Artists.Results[0].Id}&what=albums&overembed=false");
+        var answer = await httpClient.GetStringAsync($"https://music.yandex.ru/handlers/artist.jsx?artist={artistID}&what=albums&overembed=false");
         var doc = JsonDocument.Parse(answer);
 
         var result = new SearchResult()
@@ -67,4 +67,5 @@ public class YandexMusicService : DataService
         }
 
         return result;
-    }}
+    }
+}

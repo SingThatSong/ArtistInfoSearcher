@@ -1,10 +1,9 @@
-﻿using ArtistInfoSearcher;
-using MetaBrainz.MusicBrainz;
+﻿using MetaBrainz.MusicBrainz;
 using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using MetaBrainz.MusicBrainz.Interfaces.Searches;
 using System.Xml.Linq;
 
-namespace ArtistInfoSearcher;
+namespace ArtistInfoSearcher.DataServices;
 
 public class MusicBrainzService : DataService
 {
@@ -17,16 +16,16 @@ public class MusicBrainzService : DataService
         Console.WriteLine($"{artistName} {musicBrainzID}");
 
         var result = new SearchResult();
-        result.Albums  = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.Album);
-        result.EPs     = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.EP);
+        result.Albums = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.Album);
+        result.EPs = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.EP);
         result.Singles = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.Single);
         return result;
     }
 
     public async Task<Guid> GetMusicBrainzIDAsync(string artistName)
     {
-        ISearchResults<ISearchResult<IArtist>> result = await Query.FindArtistsAsync(artistName, limit: 1);
-        ISearchResult<IArtist>? sureResult = result.Results.FirstOrDefault(x => x.Score == 100);
+        ISearchResults<ISearchResult<IArtist>> result = await Query.FindArtistsAsync(artistName, limit: 10);
+        ISearchResult<IArtist>? sureResult = result.Results.FirstOrDefault(x => x.Item.Name == artistName);
         return sureResult?.Item.Id ?? Guid.Empty;
     }
 

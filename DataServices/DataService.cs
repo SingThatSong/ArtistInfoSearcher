@@ -1,4 +1,4 @@
-﻿namespace ArtistInfoSearcher;
+﻿namespace ArtistInfoSearcher.DataServices;
 
 public abstract class DataService
 {

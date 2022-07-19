@@ -1,6 +1,4 @@
-﻿using ArtistInfoSearcher;
-using CommandDotNet.Tokens;
-using Genius.Models.Artist;
+﻿using CommandDotNet.Tokens;
 using MetaBrainz.MusicBrainz;
 using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using MetaBrainz.MusicBrainz.Interfaces.Searches;
@@ -13,7 +11,7 @@ using Yandex.Music.Api;
 using Yandex.Music.Api.Common;
 using Yandex.Music.Api.Models.Account;
 
-namespace ArtistInfoSearcher;
+namespace ArtistInfoSearcher.DataServices;
 
 public class MusicStoryService : DataService
 {
@@ -21,7 +19,7 @@ public class MusicStoryService : DataService
     private const string Consumer_secret = "6854aac3d1beb557d620fb34865dc30750356869";
     private const string Access_token = "5267220a0bb426517e045c6d75492e88a1412490";
     private const string Token_secret = "8d6161342fa73d2c867d60a51c673a7eed8ee167";
-    private readonly HttpClient httpClient = new (new SocketsHttpHandler());
+    private readonly HttpClient httpClient = new(new SocketsHttpHandler());
 
     public override ServiceType ServiceType => ServiceType.MusicStory;
 
@@ -57,7 +55,7 @@ public class MusicStoryService : DataService
             EPs = entities.Where(x => x.Format == "EP").Select(x => new Entity(x.Title!, int.Parse(x.Date!.Substring(0, 4)))).ToList(),
         };
     }
-    
+
     private int GetPageCount(string xml)
     {
         var doc = new XmlDocument();
@@ -73,8 +71,8 @@ public class MusicStoryService : DataService
         doc.LoadXml(xml);
         var el = doc.SelectNodes("descendant::item")!.Cast<XmlNode>().ToList();
 
-        return el.Select(x => new ParseEntity() 
-        { 
+        return el.Select(x => new ParseEntity()
+        {
             Title = x.SelectSingleNode("descendant::title")?.InnerText,
             Format = x.SelectSingleNode("descendant::format")?.InnerText,
             Date = x.SelectSingleNode("descendant::release_date")?.InnerText,
@@ -87,9 +85,20 @@ public class MusicStoryService : DataService
         var requestResult = await DoRequest(request);
         var doc = new XmlDocument();
         doc.LoadXml(requestResult);
-        var el = doc.SelectSingleNode("descendant::id")?.InnerText;
+        var nodes = doc.SelectNodes("descendant::item");
 
-        return el;
+        if (nodes != null)
+        {
+            foreach (var node in nodes.OfType<XmlNode>())
+            {
+                if (node["name"]!.InnerText == artistName)
+                {
+                    return node["id"]!.InnerText;
+                }
+            }
+        }
+
+        return null;
     }
 
     private async Task<string> DoRequest(string request)
@@ -126,7 +135,7 @@ public class MusicStoryService : DataService
             else encodedParams = param.Parameter + "=" + param.Value;
         }
 
-        var chain = String.Join("&",
+        var chain = string.Join("&",
             EscapeUriDataStringRfc3986(HTTP_METHOD),
             EscapeUriDataStringRfc3986(REQUEST),
             EscapeUriDataStringRfc3986(encodedParams));

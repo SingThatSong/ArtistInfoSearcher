@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Xml.Linq;
 
-namespace ArtistInfoSearcher;
+namespace ArtistInfoSearcher.DataServices;
 
 public class SecondhandsongsService : DataService
 {
@@ -13,7 +13,7 @@ public class SecondhandsongsService : DataService
         artistName = artistName.Replace(' ', '+');
         var httpClient = new HttpClient(new SocketsHttpHandler());
         string? url = await GetArtistUrl(artistName, httpClient);
-        
+
         var result = new SearchResult();
         if (url == null) return result;
 

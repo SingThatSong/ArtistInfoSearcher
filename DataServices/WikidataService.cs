@@ -1,17 +1,14 @@
-﻿using Genius.Models.Artist;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using WikiClientLibrary.Client;
-using WikiClientLibrary.Sites;
 
-namespace ArtistInfoSearcher;
+namespace ArtistInfoSearcher.DataServices;
 
 public class WikidataService : DataService
 {
     public override ServiceType ServiceType => ServiceType.Wikidata;
-    private HttpClient httpClient = new (new SocketsHttpHandler());
+    private HttpClient httpClient = new(new SocketsHttpHandler());
 
     public override async Task<SearchResult> GetSearchResultAsyncInternal(string artistName)
     {

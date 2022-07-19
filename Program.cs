@@ -1,4 +1,5 @@
-﻿using CommandDotNet;
+﻿using ArtistInfoSearcher.DataServices;
+using CommandDotNet;
 using ConsoleTableExt;
 using MetaBrainz.MusicBrainz;
 using MetaBrainz.MusicBrainz.Interfaces.Entities;
