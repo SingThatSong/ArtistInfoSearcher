@@ -2,7 +2,7 @@
   "profiles": {
     "ArtistInfoSearcher": {
       "commandName": "Project",
-      "commandLineArgs": "RequestArtist \"Buckcherry\""
+      "commandLineArgs": "RequestArtist \"Papa Roach\""
     }
   }
 }

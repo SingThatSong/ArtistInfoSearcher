@@ -11,7 +11,9 @@ public abstract class DataService
         result.Albums?.ForEach(x => x.ServiceType = ServiceType);
         result.EPs?.ForEach(x => x.ServiceType = ServiceType);
         result.Singles?.ForEach(x => x.ServiceType = ServiceType);
-        result.AllTracks?.ForEach(x => x.ServiceType = ServiceType);
+        result.Compilations?.ForEach(x => x.ServiceType = ServiceType);
+        result.Lives?.ForEach(x => x.ServiceType = ServiceType);
+        result.Others?.ForEach(x => x.ServiceType = ServiceType);
 
         return result;
     }

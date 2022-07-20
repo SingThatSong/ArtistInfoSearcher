@@ -48,12 +48,15 @@ public class MusicStoryService : DataService
             }
         }
 
-        return new SearchResult()
+        var result = new SearchResult()
         {
             Albums = entities.Where(x => x.Format == "Album").Select(x => new Entity(x.Title!, int.Parse(x.Date!.Substring(0, 4)))).ToList(),
             Singles = entities.Where(x => x.Format == "Single").Select(x => new Entity(x.Title!, int.Parse(x.Date!.Substring(0, 4)))).ToList(),
             EPs = entities.Where(x => x.Format == "EP").Select(x => new Entity(x.Title!, int.Parse(x.Date!.Substring(0, 4)))).ToList(),
+            Others = entities.Where(x => x.Format != "Album" && x.Format != "Single" && x.Format != "EP").Select(x => new Entity(x.Title!, int.Parse(x.Date!.Substring(0, 4)))).ToList(),
         };
+
+        return result;
     }
 
     private int GetPageCount(string xml)

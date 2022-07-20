@@ -24,7 +24,8 @@ public class ItunesService : DataService
         {
             result.Singles = allReleases.Where(x => x.Title.EndsWith(" - Single")).ToList();
             result.EPs = allReleases.Where(x => x.Title.EndsWith(" - EP")).ToList();
-            result.Albums = allReleases.Except(result.Singles).Except(result.EPs).Where(x => !x.Title.EndsWith("Version)") && !x.Title.EndsWith("Edition)")).ToList();
+            result.Lives = allReleases.Where(x => x.Title.EndsWith("(Live)")).ToList();
+            result.Albums = allReleases.Except(result.Singles).Except(result.EPs).Except(result.Lives).ToList();
 
             result.Singles.ForEach(x => x.Title = x.Title.Remove(x.Title.IndexOf(" - Single")));
             result.Singles = result.Singles.DistinctBy(x => x.Title)

@@ -42,6 +42,11 @@ public class SecondhandsongsService : DataService
                     result.Singles ??= new List<Entity>();
                     result.Singles.Add(entity);
                     break;
+
+                default:
+                    result.Others ??= new List<Entity>();
+                    result.Others.Add(entity);
+                    break;
             }
         }
 
@@ -58,7 +63,7 @@ public class SecondhandsongsService : DataService
 
         foreach (var result in parsed.GetProperty("resultPage").EnumerateArray())
         {
-            if (result.GetProperty("commonName").GetString() == artistName)
+            if (result.GetProperty("commonName").GetString()!.Replace(' ', '+') == artistName)
             {
                 return result.GetProperty("uri").GetString();
             }

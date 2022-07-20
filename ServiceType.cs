@@ -10,4 +10,6 @@ public enum ServiceType
     MusicStory     = 1 << 4,
     TheAudiodb     = 1 << 5,
     Wikidata       = 1 << 6,
+    Amazon         = 1 << 7,
+    Spotify        = 1 << 8,
 }

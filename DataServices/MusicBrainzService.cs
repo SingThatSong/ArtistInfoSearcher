@@ -19,6 +19,7 @@ public class MusicBrainzService : DataService
         result.Albums = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.Album);
         result.EPs = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.EP);
         result.Singles = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.Single);
+        result.Others = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.Other);
         return result;
     }
 

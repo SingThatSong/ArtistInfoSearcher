@@ -7,7 +7,25 @@ public class SearchResult
     public List<Entity>? Albums { get; set; }
     public List<Entity>? EPs { get; set; }
     public List<Entity>? Singles { get; set; }
-    public List<Entity>? AllTracks { get; set; }
+    public List<Entity>? Compilations { get; set; }
+    public List<Entity>? Lives { get; set; }
+    public List<Entity>? Others { get; set; }
+
+    public List<Entity> AllResults
+    {
+        get
+        {
+            List<Entity> result = new List<Entity>();
+            if (Albums != null) result.AddRange(Albums);
+            if (EPs != null) result.AddRange(EPs);
+            if (Singles != null) result.AddRange(Singles);
+            if (Compilations != null) result.AddRange(Compilations);
+            if (Lives != null) result.AddRange(Lives);
+            if (Others != null) result.AddRange(Others);
+
+            return result;
+        }
+    }
 }
 
 public class Result
@@ -41,7 +59,7 @@ public class Years : List<(int Year, List<string> Type)>
                 sb.Append("  ");
             }
 
-            sb.Append($"{item.Year} ({string.Join(',', item.Type)})");
+            sb.Append($"{item.Year} ({string.Join(", ", item.Type.Distinct())})");
         }
 
         return sb.ToString();
@@ -65,7 +83,7 @@ public class Titles : List<(string Title, List<string> Type)>
                 sb.Append("  ");
             }
 
-            sb.Append($"{item.Title} ({string.Join(',', item.Type)})");
+            sb.Append($"{item.Title} ({string.Join(", ", item.Type.Distinct())})");
         }
 
         return sb.ToString();

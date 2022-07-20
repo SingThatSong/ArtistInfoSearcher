@@ -32,6 +32,19 @@ public class TheAudiodbService : DataService
         result.EPs = doc.Where(x => x.GetProperty("strReleaseFormat").GetString() == "EP")
                         .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
                         .ToList();
+        result.Lives = doc.Where(x => x.GetProperty("strReleaseFormat").GetString() == "Live")
+                        .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
+                        .ToList();
+        result.Compilations = doc.Where(x => x.GetProperty("strReleaseFormat").GetString() == "Compilation")
+                                 .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
+                                 .ToList();
+
+        var otherTypes = new List<string> { "Album", "Single", "EP", "Live", "Compilation" };
+
+        result.Others = doc.Where(x => !otherTypes.Contains(x.GetProperty("strReleaseFormat")!.GetString()!))
+                           .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
+                           .ToList();
+
         return result;
     }
 

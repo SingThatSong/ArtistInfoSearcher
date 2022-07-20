@@ -1,6 +1,7 @@
 ﻿using MetaBrainz.MusicBrainz;
 using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using MetaBrainz.MusicBrainz.Interfaces.Searches;
+using System.Net;
 using System.Text.Json;
 using System.Xml.Linq;
 using Yandex.Music.Api;
@@ -23,7 +24,8 @@ public class YandexMusicService : DataService
         var artistID = searchResult.Result.Artists?.Results.FirstOrDefault(x => x.Name == artistName)?.Id;
         if (artistID == null) return new SearchResult();
 
-        var httpClient = new HttpClient(new SocketsHttpHandler());
+        using var httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add("Authorization", "OAuth " + auth.Token);
 
         var answer = await httpClient.GetStringAsync($"https://music.yandex.ru/handlers/artist.jsx?artist={artistID}&what=albums&overembed=false");
         var doc = JsonDocument.Parse(answer);
@@ -32,7 +34,9 @@ public class YandexMusicService : DataService
         {
             Albums = new List<Entity>(),
             Singles = new List<Entity>(),
-            EPs = new List<Entity>()
+            EPs = new List<Entity>(),
+            Lives = new List<Entity>(),
+            Others = new List<Entity>()
         };
         foreach (var album in doc.RootElement.GetProperty("albums").EnumerateArray())
         {
@@ -48,20 +52,32 @@ public class YandexMusicService : DataService
                 }
                 else
                 {
+                    result.Others.Add(entity);
                 }
             }
             else
             {
                 if (album.TryGetProperty("version", out var version))
                 {
-                    if (!version.GetString()!.Contains("Live"))
+                    if (version.GetString()!.Contains("Live"))
                     {
-                        result.Albums.Add(entity);
+                        result.Lives.Add(entity);
+                    }
+                    else
+                    {
+                        result.Others.Add(entity);
                     }
                 }
                 else
                 {
-                    result.Albums.Add(entity);
+                    if (entity.Title.EndsWith("EP"))
+                    {
+                        result.EPs.Add(entity);
+                    }
+                    else
+                    {
+                        result.Albums.Add(entity);
+                    }
                 }
             }
         }
