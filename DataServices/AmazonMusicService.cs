@@ -56,13 +56,7 @@ public class AmazonMusicService : DataService
 
         var artistID = await GetArtistID(artistName, httpClient);
 
-        var result = new SearchResult()
-        {
-            Albums = new List<Album>(),
-            EPs = new List<Album>(),
-            Singles = new List<Album>(),
-            Others = new List<Album>(),
-        };
+        var result = new SearchResult();
 
         if (artistID == null) return result;
 
@@ -75,11 +69,11 @@ public class AmazonMusicService : DataService
         {
             if (entity.Title.EndsWith(" (Single)"))
             {
-                result.Singles!.Add(new Album(entity.Title.Substring(0, entity.Title.Length - 9), int.Parse(entity.Year!)));
+                result.Singles.Add(new Album(entity.Title.Substring(0, entity.Title.Length - 9), int.Parse(entity.Year!)));
             }
             else
             {
-                result.Others!.Add(new Album(entity.Title, int.Parse(entity.Year!)));
+                result.Others.Add(new Album(entity.Title, int.Parse(entity.Year!)));
             }
         }
 
@@ -96,11 +90,11 @@ public class AmazonMusicService : DataService
                 {
                     if (entity.Title.EndsWith(" (Single)"))
                     {
-                        result.Singles!.Add(new Album(entity.Title.Substring(0, entity.Title.Length - 9), int.Parse(entity.Year!)));
+                        result.Singles.Add(new Album(entity.Title.Substring(0, entity.Title.Length - 9), int.Parse(entity.Year!)));
                     }
                     else
                     {
-                        result.Others!.Add(new Album(entity.Title, int.Parse(entity.Year!)));
+                        result.Others.Add(new Album(entity.Title, int.Parse(entity.Year!)));
                     }
                 }
             }

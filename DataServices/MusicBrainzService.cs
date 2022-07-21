@@ -15,6 +15,11 @@ public class MusicBrainzService : DataService
         var musicBrainzID = await GetMusicBrainzIDAsync(artistName);
         Console.WriteLine($"{artistName} {musicBrainzID}");
 
+        if (musicBrainzID == Guid.Empty)
+        {
+            return new SearchResult();
+        }
+
         var result = new SearchResult();
         result.Albums = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.Album);
         result.EPs = await GetEnitiesByTypeAsync(musicBrainzID, ReleaseType.EP);
@@ -30,13 +35,8 @@ public class MusicBrainzService : DataService
         return sureResult?.Item.Id ?? Guid.Empty;
     }
 
-    private async Task<List<Album>?> GetEnitiesByTypeAsync(Guid musicBrainzArtistID, ReleaseType type)
+    private async Task<List<Album>> GetEnitiesByTypeAsync(Guid musicBrainzArtistID, ReleaseType type)
     {
-        if (musicBrainzArtistID == Guid.Empty)
-        {
-            return null;
-        }
-
         var answer = await Query.BrowseArtistReleaseGroupsAsync(musicBrainzArtistID, limit: 10000, type: type);
 
         return answer.Results

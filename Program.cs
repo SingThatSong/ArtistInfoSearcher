@@ -17,7 +17,7 @@ public class Program
         return new AppRunner<Program>().Run(args);
     }
 
-    public void RequestArtist(string name)
+    public void RequestArtist(string name, bool verbose)
     {
         var dataServices = GetAllDataServices();
 
@@ -46,104 +46,94 @@ public class Program
             }
         });
 
-        foreach (var result in results.Where(x => x.Albums != null))
+        foreach (var result in results)
         {
-            foreach (var album in result.Albums!.ToList())
+            foreach (var album in result.Albums.ToList())
             {
                 var nameNormalized = Normalize(album.Title);
 
-                if (results.SelectMany(x => x.Lives ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Lives).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.Albums!.Remove(album);
-                    result.Lives ??= new List<Album>();
+                    result.Albums.Remove(album);
                     result.Lives.Add(album);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Compilations).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.Albums!.Remove(album);
-                    result.Compilations ??= new List<Album>();
+                    result.Albums.Remove(album);
                     result.Compilations.Add(album);
                     continue;
                 }
             }
         }
 
-        foreach (var result in results.Where(x => x.EPs != null))
+        foreach (var result in results)
         {
-            foreach (var ep in result.EPs!.ToList())
+            foreach (var ep in result.EPs.ToList())
             {
                 var nameNormalized = Normalize(ep.Title);
 
-                if (results.SelectMany(x => x.Lives ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Lives).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.EPs!.Remove(ep);
-                    result.Lives ??= new List<Album>();
+                    result.EPs.Remove(ep);
                     result.Lives.Add(ep);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Compilations).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.EPs!.Remove(ep);
-                    result.Compilations ??= new List<Album>();
+                    result.EPs.Remove(ep);
                     result.Compilations.Add(ep);
                     continue;
                 }
             }
         }
 
-        foreach (var result in results.Where(x => x.Others != null))
+        foreach (var result in results)
         {
-            foreach (var other in result.Others!.ToList())
+            foreach (var other in result.Others.ToList())
             {
                 var nameNormalized = Normalize(other.Title);
 
-                if (results.SelectMany(x => x.Albums ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Albums).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.Others!.Remove(other);
-                    result.Albums ??= new List<Album>();
+                    result.Others.Remove(other);
                     result.Albums.Add(other);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.EPs ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.EPs).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.Others!.Remove(other);
-                    result.EPs ??= new List<Album>();
+                    result.Others.Remove(other);
                     result.EPs.Add(other);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Lives ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Lives).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.Others!.Remove(other);
-                    result.Lives ??= new List<Album>();
+                    result.Others.Remove(other);
                     result.Lives.Add(other);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Compilations).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.Others!.Remove(other);
-                    result.Compilations ??= new List<Album>();
+                    result.Others.Remove(other);
                     result.Compilations.Add(other);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Singles ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Singles).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.Others!.Remove(other);
-                    result.Singles ??= new List<Album>();
+                    result.Others.Remove(other);
                     result.Singles.Add(other);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Appearances ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Appearances).Any(x => Normalize(x.Title) == nameNormalized))
                 {
-                    result.Others!.Remove(other);
-                    result.Appearances ??= new List<Album>();
+                    result.Others.Remove(other);
                     result.Appearances.Add(other);
                     continue;
                 }
@@ -151,48 +141,48 @@ public class Program
         }
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Albums ?? Enumerable.Empty<Album>())))
+            .From(GroupResults(results.SelectMany(x => x.Albums), verbose: verbose))
             .WithTitle("Albums")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.EPs ?? Enumerable.Empty<Album>())))
+            .From(GroupResults(results.SelectMany(x => x.EPs), verbose: verbose))
             .WithTitle("EPs")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Singles ?? Enumerable.Empty<Album>()), removeBrackets: false))
+            .From(GroupResults(results.SelectMany(x => x.Singles), includeBrackets: true, verbose: verbose))
             .WithTitle("Singles")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Lives ?? Enumerable.Empty<Album>())))
+            .From(GroupResults(results.SelectMany(x => x.Lives), verbose: verbose))
             .WithTitle("Lives")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Album>())))
+            .From(GroupResults(results.SelectMany(x => x.Compilations), verbose: verbose))
             .WithTitle("Compilations")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Appearances ?? Enumerable.Empty<Album>())))
+            .From(GroupResults(results.SelectMany(x => x.Appearances), verbose: verbose))
             .WithTitle("Appearances")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Others ?? Enumerable.Empty<Album>())))
+            .From(GroupResults(results.SelectMany(x => x.Others), verbose: verbose))
             .WithTitle("Others")
             .ExportAndWriteLine();
     }
 
-    private List<ResultEntity> GroupResults(IEnumerable<Album> enumerable, bool removeBrackets = true)
+    private List<ResultEntity> GroupResults(IEnumerable<Album> enumerable, bool includeBrackets = false, bool verbose = false)
     {
-        var groupedByName = enumerable.GroupBy(x => Normalize(x.Title, removeBrackets));
+        var groupedByName = enumerable.GroupBy(x => Normalize(x.Title, includeBrackets));
 
-        return groupedByName.Select(group =>
+        var entities = groupedByName.Select(group =>
         {
-            var result = new ResultEntity();
+            var result = new GroupedEntity();
 
             foreach (var entry in group)
             {
@@ -227,9 +217,80 @@ public class Program
         })
             .OrderByDescending(x => x.Years.Min(y => y.Year))
             .ToList();
+
+        List<ResultEntity> resultEntities = new List<ResultEntity>();
+        foreach (var item in entities)
+        {
+            if (verbose)
+            {
+                if (item.Years.Count > 1 || item.Titles.Count > 1)
+                {
+                    var yearsSorted = item.Years.OrderByDescending(x => x.Type.Distinct().Count()).ToList();
+                    var titlesSorted = item.Titles.OrderByDescending(x => x.Type.Distinct().Count()).ToList();
+
+                    for (int i = 0; i < Math.Max(yearsSorted.Count, item.Titles.Count); i++)
+                    {
+                        string? year = null;
+                        string? title = null;
+                        ServiceType? service = null;
+                        if (i == 0)
+                        {
+                            service = item.Services;
+
+                            if (yearsSorted.Count == 1)
+                            {
+                                year = yearsSorted.First().Year.ToString();
+                            }
+                            else
+                            {
+                                year = yearsSorted.Count > i
+                                        ? $"{i + 1}. {yearsSorted.ElementAt(i).Year} ({string.Join(", ", yearsSorted.ElementAt(i).Type.Distinct())})"
+                                        : null;
+                            }
+
+                            if (titlesSorted.Count == 1)
+                            {
+                                year = titlesSorted.First().Title;
+                            }
+                            else
+                            {
+                                title = titlesSorted.Count > i
+                                         ? $"{i + 1}. {titlesSorted.ElementAt(i).Title} ({string.Join(", ", titlesSorted.ElementAt(i).Type.Distinct())})"
+                                         : null;
+                            }
+                        }
+                        else
+                        {
+                            year = yearsSorted.Count > i
+                                    ? $"{i + 1}. {yearsSorted.ElementAt(i).Year} ({string.Join(", ", yearsSorted.ElementAt(i).Type.Distinct())})"
+                                    : null;
+
+                            title = titlesSorted.Count > i
+                                     ? $"{i + 1}. {titlesSorted.ElementAt(i).Title} ({string.Join(", ", titlesSorted.ElementAt(i).Type.Distinct())})"
+                                     : null;
+                        }
+
+                        resultEntities.Add(new ResultEntity(year, title, service));
+                    }
+                }
+                else
+                {
+                    resultEntities.Add(new ResultEntity(item.Years.ToString(), item.Titles.ToString(), item.Services));
+                }
+            }
+            else
+            {
+                var yearsSorted = item.Years.OrderByDescending(x => x.Type.Distinct().Count()).ToList();
+                var titlesSorted = item.Titles.OrderByDescending(x => x.Type.Distinct().Count()).ToList();
+
+                resultEntities.Add(new ResultEntity(yearsSorted.First().Year.ToString(), titlesSorted.First().Title, null));
+            }
+        }
+
+        return resultEntities;
     }
 
-    private static string Normalize(string x, bool removeBrackets = true)
+    private static string Normalize(string x, bool includeBrackets = false)
     {
         var result = x.Replace(" ", "")
                       .Replace(",", "")
@@ -241,7 +302,7 @@ public class Program
                       .Replace('[', '(')
                       .ToLowerInvariant();
 
-        if (removeBrackets)
+        if (!includeBrackets)
         {
             var index = result.IndexOf('(');
 
@@ -268,3 +329,5 @@ public class Program
         return dataServices.Select(x => (DataService)Activator.CreateInstance(x)!).ToList();
     }
 }
+
+public record ResultEntity(string? Year, string? Title, ServiceType? Services);

@@ -31,13 +31,7 @@ public class YoutubeMusicService : DataService
         var results = result!.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
         var doc = JsonDocument.Parse(results.First());
 
-        var returnResult = new SearchResult()
-        {
-            Albums = new List<Album>(),
-            EPs = new List<Album>(),
-            Singles = new List<Album>(),
-            Others = new List<Album>()
-        };
+        var returnResult = new SearchResult();
 
         List<AlbumParseData> albumData;
 
@@ -85,9 +79,8 @@ public class YoutubeMusicService : DataService
 
             foreach (var item in doc.RootElement.GetProperty("albums").GetProperty("results").EnumerateArray())
             {
-                var type = item.GetProperty("type").GetString();
                 var entity = new Album(item.GetProperty("title").GetString()!, int.Parse(item.GetProperty("year").GetString()!));
-                var songsData = albumData.FirstOrDefault(x => x.Type == type && x.Title == entity.Title && x.Year == entity.Year.ToString());
+                var songsData = albumData.FirstOrDefault(x => x.Title == entity.Title && x.Year == entity.Year.ToString());
                 if (songsData != null)
                 {
                     entity.Songs = songsData.SongParseDatas.Select(x => new Song(x.Number, x.Title, x.Duration)).ToList();
@@ -98,9 +91,8 @@ public class YoutubeMusicService : DataService
 
             foreach (var item in doc.RootElement.GetProperty("singles").GetProperty("results").EnumerateArray())
             {
-                var type = item.GetProperty("type").GetString();
                 var entity = new Album(item.GetProperty("title").GetString()!, int.Parse(item.GetProperty("year").GetString()!));
-                var songsData = albumData.FirstOrDefault(x => x.Type == type && x.Title == entity.Title && x.Year == entity.Year.ToString());
+                var songsData = albumData.FirstOrDefault(x => x.Title == entity.Title && x.Year == entity.Year.ToString());
                 if (songsData != null)
                 {
                     entity.Songs = songsData.SongParseDatas.Select(x => new Song(x.Number, x.Title, x.Duration)).ToList();

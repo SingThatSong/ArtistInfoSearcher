@@ -28,25 +28,10 @@ public class SecondhandsongsService : DataService
 
             switch (type)
             {
-                case "album":
-                    result.Albums ??= new List<Album>();
-                    result.Albums.Add(entity);
-                    break;
-
-                case "EP":
-                    result.EPs ??= new List<Album>();
-                    result.EPs.Add(entity);
-                    break;
-
-                case "single":
-                    result.Singles ??= new List<Album>();
-                    result.Singles.Add(entity);
-                    break;
-
-                default:
-                    result.Others ??= new List<Album>();
-                    result.Others.Add(entity);
-                    break;
+                case "album": result.Albums.Add(entity); break;
+                case "EP": result.EPs.Add(entity); break;
+                case "single": result.Singles.Add(entity); break;
+                default: result.Others.Add(entity); break;
             }
         }
 

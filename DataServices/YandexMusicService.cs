@@ -30,14 +30,7 @@ public class YandexMusicService : DataService
         var answer = await httpClient.GetStringAsync($"https://music.yandex.ru/handlers/artist.jsx?artist={artistID}&what=albums&overembed=false");
         var doc = JsonDocument.Parse(answer);
 
-        var result = new SearchResult()
-        {
-            Albums = new List<Album>(),
-            Singles = new List<Album>(),
-            EPs = new List<Album>(),
-            Lives = new List<Album>(),
-            Others = new List<Album>()
-        };
+        var result = new SearchResult();
         foreach (var album in doc.RootElement.GetProperty("albums").EnumerateArray())
         {
             var title = album.GetProperty("title").GetString()!;

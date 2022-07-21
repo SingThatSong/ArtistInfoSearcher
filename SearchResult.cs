@@ -4,25 +4,25 @@ namespace ArtistInfoSearcher;
 
 public class SearchResult
 {
-    public List<Album>? Albums { get; set; }
-    public List<Album>? EPs { get; set; }
-    public List<Album>? Singles { get; set; }
-    public List<Album>? Compilations { get; set; }
-    public List<Album>? Lives { get; set; }
-    public List<Album>? Appearances { get; set; }
-    public List<Album>? Others { get; set; }
+    public List<Album> Albums { get; set; } = new List<Album>();
+    public List<Album> EPs { get; set; } = new List<Album>();
+    public List<Album> Singles { get; set; } = new List<Album>();
+    public List<Album> Compilations { get; set; } = new List<Album>();
+    public List<Album> Lives { get; set; } = new List<Album>();
+    public List<Album> Appearances { get; set; } = new List<Album>();
+    public List<Album> Others { get; set; } = new List<Album>();
 
     public List<Album> AllResults
     {
         get
         {
             List<Album> result = new List<Album>();
-            if (Albums != null) result.AddRange(Albums);
-            if (EPs != null) result.AddRange(EPs);
-            if (Singles != null) result.AddRange(Singles);
-            if (Compilations != null) result.AddRange(Compilations);
-            if (Lives != null) result.AddRange(Lives);
-            if (Others != null) result.AddRange(Others);
+            result.AddRange(Albums);
+            result.AddRange(EPs);
+            result.AddRange(Singles);
+            result.AddRange(Compilations);
+            result.AddRange(Lives);
+            result.AddRange(Others);
 
             return result;
         }
@@ -31,12 +31,12 @@ public class SearchResult
 
 public class Result
 {
-    public List<ResultEntity>? Albums { get; set; }
-    public List<ResultEntity>? EPs { get; set; }
-    public List<ResultEntity>? Singles { get; set; }
+    public List<GroupedEntity>? Albums { get; set; }
+    public List<GroupedEntity>? EPs { get; set; }
+    public List<GroupedEntity>? Singles { get; set; }
 }
 
-public class ResultEntity
+public class GroupedEntity
 {
     public Years Years { get; set; } = new Years();
     public Titles Titles { get; set; } = new Titles();
