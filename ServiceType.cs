@@ -12,4 +12,6 @@ public enum ServiceType
     Wikidata       = 1 << 6,
     Amazon         = 1 << 7,
     Spotify        = 1 << 8,
+    Discogs        = 1 << 9,
+    YoutubeMusic   = 1 << 10,
 }

@@ -37,14 +37,21 @@ public class SpotifyService : DataService
         var albums = albumsRecieved.Where(x => x.AlbumGroup == "album" && x.AlbumType == "album").ToList();
         var singles = albumsRecieved.Where(x => x.AlbumGroup == "single" && x.AlbumType == "single").ToList();
         var compilations = albumsRecieved.Where(x => x.AlbumGroup == "compilation" && x.AlbumType == "compilation").ToList();
-        var other = albumsRecieved.Except(albums).Except(singles).Except(compilations).Where(x => !x.Artists.Any(x => x.Name == "Various Artists")).ToList();
+        var appearances = albumsRecieved.Where(x => x.AlbumGroup == "appears_on" && !x.Artists.Any(x => x.Name == "Various Artists")).ToList();
+        var other = albumsRecieved.Except(albums)
+                                  .Except(singles)
+                                  .Except(compilations)
+                                  .Except(appearances)
+                                  .Where(x => !x.Artists.Any(x => x.Name == "Various Artists"))
+                                  .ToList();
 
         return new SearchResult()
         {
-            Albums = albums.Select(x => new Entity(x.Name, int.Parse(x.ReleaseDate!.Substring(0, 4)))).ToList(),
-            Singles = singles.Select(x => new Entity(x.Name, int.Parse(x.ReleaseDate!.Substring(0, 4)))).ToList(),
-            Compilations = compilations.Select(x => new Entity(x.Name, int.Parse(x.ReleaseDate!.Substring(0, 4)))).ToList(),
-            Others = other.Select(x => new Entity(x.Name, int.Parse(x.ReleaseDate!.Substring(0, 4)))).ToList(),
+            Albums = albums.Select(x => new Album(x.Name, int.Parse(x.ReleaseDate!.Substring(0, 4)))).ToList(),
+            Singles = singles.Select(x => new Album(x.Name, int.Parse(x.ReleaseDate!.Substring(0, 4)))).ToList(),
+            Compilations = compilations.Select(x => new Album(x.Name, int.Parse(x.ReleaseDate!.Substring(0, 4)))).ToList(),
+            Appearances = appearances.Select(x => new Album(x.Name, int.Parse(x.ReleaseDate!.Substring(0, 4)))).ToList(),
+            Others = other.Select(x => new Album(x.Name, int.Parse(x.ReleaseDate!.Substring(0, 4)))).ToList(),
         };
     }
 
@@ -62,14 +69,14 @@ public class SpotifyService : DataService
         }
     }
 
-    private static async Task<List<Entity>?> GetAllReleasesAsync(long artistID, HttpClient httpClient)
+    private static async Task<List<Album>?> GetAllReleasesAsync(long artistID, HttpClient httpClient)
     {
         try
         {
             var answer = await httpClient.GetStringAsync($"https://itunes.apple.com/lookup?id={artistID}&entity=album&limit=200");
             var doc = JsonDocument.Parse(answer);
 
-            var result = new List<Entity>();
+            var result = new List<Album>();
             foreach (var album in doc.RootElement.GetProperty("results").EnumerateArray())
             {
                 if (album.TryGetProperty("collectionName", out var collectionProperty))
@@ -77,7 +84,7 @@ public class SpotifyService : DataService
                     var title = collectionProperty.GetString();
                     if (title != null)
                     {
-                        result.Add(new Entity(title, album.GetProperty("releaseDate").GetDateTime().Year));
+                        result.Add(new Album(title, album.GetProperty("releaseDate").GetDateTime().Year));
                     }
                 }
             }

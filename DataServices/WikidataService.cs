@@ -45,9 +45,9 @@ public class WikidataService : DataService
         return result;
     }
 
-    private List<Entity> ParseReleases(JsonDocument doc)
+    private List<Album> ParseReleases(JsonDocument doc)
     {
-        List<Entity> result = new();
+        List<Album> result = new();
         foreach (var album in doc.RootElement.GetProperty("results").GetProperty("bindings").EnumerateArray())
         {
             var date = album.GetProperty("publication_date").GetProperty("value").GetDateTimeOffset();
@@ -56,7 +56,7 @@ public class WikidataService : DataService
 
             if (!uri!.Contains(title!))
             {
-                result.Add(new Entity(title!, date.Year));
+                result.Add(new Album(title!, date.Year));
             }
         }
 

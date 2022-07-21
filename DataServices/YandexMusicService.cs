@@ -32,17 +32,17 @@ public class YandexMusicService : DataService
 
         var result = new SearchResult()
         {
-            Albums = new List<Entity>(),
-            Singles = new List<Entity>(),
-            EPs = new List<Entity>(),
-            Lives = new List<Entity>(),
-            Others = new List<Entity>()
+            Albums = new List<Album>(),
+            Singles = new List<Album>(),
+            EPs = new List<Album>(),
+            Lives = new List<Album>(),
+            Others = new List<Album>()
         };
         foreach (var album in doc.RootElement.GetProperty("albums").EnumerateArray())
         {
             var title = album.GetProperty("title").GetString()!;
             var year = album.GetProperty("year").GetInt32();
-            var entity = new Entity(title, year);
+            var entity = new Album(title, year);
 
             if (album.TryGetProperty("type", out var type))
             {

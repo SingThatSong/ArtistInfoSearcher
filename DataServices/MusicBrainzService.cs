@@ -30,7 +30,7 @@ public class MusicBrainzService : DataService
         return sureResult?.Item.Id ?? Guid.Empty;
     }
 
-    private async Task<List<Entity>?> GetEnitiesByTypeAsync(Guid musicBrainzArtistID, ReleaseType type)
+    private async Task<List<Album>?> GetEnitiesByTypeAsync(Guid musicBrainzArtistID, ReleaseType type)
     {
         if (musicBrainzArtistID == Guid.Empty)
         {
@@ -41,7 +41,7 @@ public class MusicBrainzService : DataService
 
         return answer.Results
                      .Where(x => x.SecondaryTypes == null || !x.SecondaryTypes.Any())
-                     .Select(x => new Entity(x.Title!, x.FirstReleaseDate!.NearestDate.Year))
+                     .Select(x => new Album(x.Title!, x.FirstReleaseDate!.NearestDate.Year))
                      .OrderByDescending(x => x.Year)
                      .ToList();
     }

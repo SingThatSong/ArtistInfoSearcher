@@ -1,8 +1,8 @@
 ﻿namespace ArtistInfoSearcher;
 
-public class Entity
+public class Album
 {
-    public Entity(string title, int? year = null)
+    public Album(string title, int? year = null)
     {
         Title = title;
         Year = year;
@@ -11,4 +11,8 @@ public class Entity
     public int? Year { get; set; }
     public string Title { get; set; }
     public ServiceType? ServiceType { get; set; }
+
+    public List<Song> Songs { get; set; } = new List<Song>();
 }
+
+public record Song(int Number, string Title, TimeSpan Duration);

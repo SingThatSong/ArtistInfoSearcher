@@ -52,18 +52,18 @@ public class Program
             {
                 var nameNormalized = Normalize(album.Title);
 
-                if (results.SelectMany(x => x.Lives ?? Enumerable.Empty<Entity>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Lives ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
                 {
                     result.Albums!.Remove(album);
-                    result.Lives ??= new List<Entity>();
+                    result.Lives ??= new List<Album>();
                     result.Lives.Add(album);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Entity>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
                 {
                     result.Albums!.Remove(album);
-                    result.Compilations ??= new List<Entity>();
+                    result.Compilations ??= new List<Album>();
                     result.Compilations.Add(album);
                     continue;
                 }
@@ -76,18 +76,18 @@ public class Program
             {
                 var nameNormalized = Normalize(ep.Title);
 
-                if (results.SelectMany(x => x.Lives ?? Enumerable.Empty<Entity>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Lives ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
                 {
                     result.EPs!.Remove(ep);
-                    result.Lives ??= new List<Entity>();
+                    result.Lives ??= new List<Album>();
                     result.Lives.Add(ep);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Entity>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
                 {
                     result.EPs!.Remove(ep);
-                    result.Compilations ??= new List<Entity>();
+                    result.Compilations ??= new List<Album>();
                     result.Compilations.Add(ep);
                     continue;
                 }
@@ -100,80 +100,93 @@ public class Program
             {
                 var nameNormalized = Normalize(other.Title);
 
-                if (results.SelectMany(x => x.Albums ?? Enumerable.Empty<Entity>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Albums ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
                 {
                     result.Others!.Remove(other);
-                    result.Albums ??= new List<Entity>();
+                    result.Albums ??= new List<Album>();
                     result.Albums.Add(other);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.EPs ?? Enumerable.Empty<Entity>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.EPs ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
                 {
                     result.Others!.Remove(other);
-                    result.EPs ??= new List<Entity>();
+                    result.EPs ??= new List<Album>();
                     result.EPs.Add(other);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Lives ?? Enumerable.Empty<Entity>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Lives ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
                 {
                     result.Others!.Remove(other);
-                    result.Lives ??= new List<Entity>();
+                    result.Lives ??= new List<Album>();
                     result.Lives.Add(other);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Entity>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
                 {
                     result.Others!.Remove(other);
-                    result.Compilations ??= new List<Entity>();
+                    result.Compilations ??= new List<Album>();
                     result.Compilations.Add(other);
                     continue;
                 }
 
-                if (results.SelectMany(x => x.Singles ?? Enumerable.Empty<Entity>()).Any(x => Normalize(x.Title) == nameNormalized))
+                if (results.SelectMany(x => x.Singles ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
                 {
                     result.Others!.Remove(other);
-                    result.Singles ??= new List<Entity>();
+                    result.Singles ??= new List<Album>();
                     result.Singles.Add(other);
+                    continue;
+                }
+
+                if (results.SelectMany(x => x.Appearances ?? Enumerable.Empty<Album>()).Any(x => Normalize(x.Title) == nameNormalized))
+                {
+                    result.Others!.Remove(other);
+                    result.Appearances ??= new List<Album>();
+                    result.Appearances.Add(other);
                     continue;
                 }
             }
         }
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Albums ?? Enumerable.Empty<Entity>())))
+            .From(GroupResults(results.SelectMany(x => x.Albums ?? Enumerable.Empty<Album>())))
             .WithTitle("Albums")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.EPs ?? Enumerable.Empty<Entity>())))
+            .From(GroupResults(results.SelectMany(x => x.EPs ?? Enumerable.Empty<Album>())))
             .WithTitle("EPs")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Singles ?? Enumerable.Empty<Entity>()), removeBrackets: false))
+            .From(GroupResults(results.SelectMany(x => x.Singles ?? Enumerable.Empty<Album>()), removeBrackets: false))
             .WithTitle("Singles")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Lives ?? Enumerable.Empty<Entity>())))
+            .From(GroupResults(results.SelectMany(x => x.Lives ?? Enumerable.Empty<Album>())))
             .WithTitle("Lives")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Entity>())))
+            .From(GroupResults(results.SelectMany(x => x.Compilations ?? Enumerable.Empty<Album>())))
             .WithTitle("Compilations")
             .ExportAndWriteLine();
 
         ConsoleTableBuilder
-            .From(GroupResults(results.SelectMany(x => x.Others ?? Enumerable.Empty<Entity>())))
+            .From(GroupResults(results.SelectMany(x => x.Appearances ?? Enumerable.Empty<Album>())))
+            .WithTitle("Appearances")
+            .ExportAndWriteLine();
+
+        ConsoleTableBuilder
+            .From(GroupResults(results.SelectMany(x => x.Others ?? Enumerable.Empty<Album>())))
             .WithTitle("Others")
             .ExportAndWriteLine();
     }
 
-    private List<ResultEntity> GroupResults(IEnumerable<Entity> enumerable, bool removeBrackets = true)
+    private List<ResultEntity> GroupResults(IEnumerable<Album> enumerable, bool removeBrackets = true)
     {
         var groupedByName = enumerable.GroupBy(x => Normalize(x.Title, removeBrackets));
 

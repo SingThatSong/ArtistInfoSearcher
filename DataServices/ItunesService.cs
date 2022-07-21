@@ -55,14 +55,14 @@ public class ItunesService : DataService
         }
     }
 
-    private static async Task<List<Entity>?> GetAllReleasesAsync(long artistID, HttpClient httpClient)
+    private static async Task<List<Album>?> GetAllReleasesAsync(long artistID, HttpClient httpClient)
     {
         try
         {
             var answer = await httpClient.GetStringAsync($"https://itunes.apple.com/lookup?id={artistID}&entity=album&limit=200");
             var doc = JsonDocument.Parse(answer);
 
-            var result = new List<Entity>();
+            var result = new List<Album>();
             foreach (var album in doc.RootElement.GetProperty("results").EnumerateArray())
             {
                 if (album.TryGetProperty("collectionName", out var collectionProperty))
@@ -70,7 +70,7 @@ public class ItunesService : DataService
                     var title = collectionProperty.GetString();
                     if (title != null)
                     {
-                        result.Add(new Entity(title, album.GetProperty("releaseDate").GetDateTime().Year));
+                        result.Add(new Album(title, album.GetProperty("releaseDate").GetDateTime().Year));
                     }
                 }
             }

@@ -13,6 +13,7 @@ public abstract class DataService
         result.Singles?.ForEach(x => x.ServiceType = ServiceType);
         result.Compilations?.ForEach(x => x.ServiceType = ServiceType);
         result.Lives?.ForEach(x => x.ServiceType = ServiceType);
+        result.Appearances?.ForEach(x => x.ServiceType = ServiceType);
         result.Others?.ForEach(x => x.ServiceType = ServiceType);
 
         return result;

@@ -24,27 +24,27 @@ public class SecondhandsongsService : DataService
             var title = release.GetProperty("title").GetString();
             var year = await GetReleaseYear(release.GetProperty("uri").GetString(), httpClient);
 
-            var entity = new Entity(title!, year);
+            var entity = new Album(title!, year);
 
             switch (type)
             {
                 case "album":
-                    result.Albums ??= new List<Entity>();
+                    result.Albums ??= new List<Album>();
                     result.Albums.Add(entity);
                     break;
 
                 case "EP":
-                    result.EPs ??= new List<Entity>();
+                    result.EPs ??= new List<Album>();
                     result.EPs.Add(entity);
                     break;
 
                 case "single":
-                    result.Singles ??= new List<Entity>();
+                    result.Singles ??= new List<Album>();
                     result.Singles.Add(entity);
                     break;
 
                 default:
-                    result.Others ??= new List<Entity>();
+                    result.Others ??= new List<Album>();
                     result.Others.Add(entity);
                     break;
             }

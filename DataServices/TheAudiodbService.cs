@@ -24,25 +24,25 @@ public class TheAudiodbService : DataService
 
         var result = new SearchResult();
         result.Albums = doc.Where(x => x.GetProperty("strReleaseFormat").GetString() == "Album")
-                           .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
+                           .Select(x => new Album(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
                            .ToList();
         result.Singles = doc.Where(x => x.GetProperty("strReleaseFormat").GetString() == "Single")
-                           .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
+                           .Select(x => new Album(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
                            .ToList();
         result.EPs = doc.Where(x => x.GetProperty("strReleaseFormat").GetString() == "EP")
-                        .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
+                        .Select(x => new Album(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
                         .ToList();
         result.Lives = doc.Where(x => x.GetProperty("strReleaseFormat").GetString() == "Live")
-                        .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
+                        .Select(x => new Album(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
                         .ToList();
         result.Compilations = doc.Where(x => x.GetProperty("strReleaseFormat").GetString() == "Compilation")
-                                 .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
+                                 .Select(x => new Album(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
                                  .ToList();
 
         var otherTypes = new List<string> { "Album", "Single", "EP", "Live", "Compilation" };
 
         result.Others = doc.Where(x => !otherTypes.Contains(x.GetProperty("strReleaseFormat")!.GetString()!))
-                           .Select(x => new Entity(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
+                           .Select(x => new Album(x.GetProperty("strAlbum").GetString()!, int.Parse(x.GetProperty("intYearReleased")!.GetString()!)))
                            .ToList();
 
         return result;
@@ -62,14 +62,14 @@ public class TheAudiodbService : DataService
         }
     }
 
-    private static async Task<List<Entity>?> GetAllReleasesAsync(long artistID, HttpClient httpClient)
+    private static async Task<List<Album>?> GetAllReleasesAsync(long artistID, HttpClient httpClient)
     {
         try
         {
             var answer = await httpClient.GetStringAsync($"https://itunes.apple.com/lookup?id={artistID}&entity=album&limit=200");
             var doc = JsonDocument.Parse(answer);
 
-            var result = new List<Entity>();
+            var result = new List<Album>();
             foreach (var album in doc.RootElement.GetProperty("results").EnumerateArray())
             {
                 if (album.TryGetProperty("collectionName", out var collectionProperty))
@@ -77,7 +77,7 @@ public class TheAudiodbService : DataService
                     var title = collectionProperty.GetString();
                     if (title != null)
                     {
-                        result.Add(new Entity(title, album.GetProperty("releaseDate").GetDateTime().Year));
+                        result.Add(new Album(title, album.GetProperty("releaseDate").GetDateTime().Year));
                     }
                 }
             }

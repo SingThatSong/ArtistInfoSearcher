@@ -4,18 +4,19 @@ namespace ArtistInfoSearcher;
 
 public class SearchResult
 {
-    public List<Entity>? Albums { get; set; }
-    public List<Entity>? EPs { get; set; }
-    public List<Entity>? Singles { get; set; }
-    public List<Entity>? Compilations { get; set; }
-    public List<Entity>? Lives { get; set; }
-    public List<Entity>? Others { get; set; }
+    public List<Album>? Albums { get; set; }
+    public List<Album>? EPs { get; set; }
+    public List<Album>? Singles { get; set; }
+    public List<Album>? Compilations { get; set; }
+    public List<Album>? Lives { get; set; }
+    public List<Album>? Appearances { get; set; }
+    public List<Album>? Others { get; set; }
 
-    public List<Entity> AllResults
+    public List<Album> AllResults
     {
         get
         {
-            List<Entity> result = new List<Entity>();
+            List<Album> result = new List<Album>();
             if (Albums != null) result.AddRange(Albums);
             if (EPs != null) result.AddRange(EPs);
             if (Singles != null) result.AddRange(Singles);
