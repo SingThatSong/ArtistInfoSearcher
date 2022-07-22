@@ -13,7 +13,6 @@ public class MusicBrainzService : DataService
     public override async Task<SearchResult> GetSearchResultAsyncInternal(string artistName)
     {
         var musicBrainzID = await GetMusicBrainzIDAsync(artistName);
-        Console.WriteLine($"{artistName} {musicBrainzID}");
 
         if (musicBrainzID == Guid.Empty)
         {
@@ -31,7 +30,8 @@ public class MusicBrainzService : DataService
     public async Task<Guid> GetMusicBrainzIDAsync(string artistName)
     {
         ISearchResults<ISearchResult<IArtist>> result = await Query.FindArtistsAsync(artistName, limit: 10);
-        ISearchResult<IArtist>? sureResult = result.Results.FirstOrDefault(x => x.Item.Name == artistName);
+        ISearchResult<IArtist>? sureResult = result.Results.FirstOrDefault(x => x.Item.Name!.ToLowerInvariant() == artistName.ToLowerInvariant() 
+                                                                             || x.Item.Aliases?.Any(x => x.Name.ToLowerInvariant() == artistName.ToLowerInvariant()) == true);
         return sureResult?.Item.Id ?? Guid.Empty;
     }
 

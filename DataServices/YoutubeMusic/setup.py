@@ -14,6 +14,10 @@ if len(search_results) > 0:
 
     artistData = ytmusic.get_artist(artistFound['browseId'])
     
+    songs_results = ytmusic.get_playlist(artistData['songs']['browseId'][2:], 1000)
+    print(json.dumps(songs_results))
+    print()
+
     if artistData['albums']['browseId'] is not None:
         albums_results = ytmusic.get_artist_albums(artistData['albums']['browseId'],
                                                   artistData['albums']['params'])

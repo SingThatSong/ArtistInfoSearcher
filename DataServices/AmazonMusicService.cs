@@ -203,7 +203,7 @@ public class AmazonMusicService : DataService
 
             foreach (var artistItem in artistItems.GetProperty("items").EnumerateArray())
             {
-                if (artistItem.GetProperty("primaryText").GetProperty("text").GetString() == artistName)
+                if (artistItem.GetProperty("primaryText").GetProperty("text").GetString()!.ToLowerInvariant() == artistName.ToLowerInvariant())
                 {
                     return artistItem.GetProperty("primaryLink").GetProperty("deeplink").GetString();
                 }

@@ -94,7 +94,7 @@ public class MusicStoryService : DataService
         {
             foreach (var node in nodes.OfType<XmlNode>())
             {
-                if (node["name"]!.InnerText == artistName)
+                if (node["name"]!.InnerText.ToLowerInvariant().Replace(" ", "") == artistName.ToLowerInvariant().Replace(" ", ""))
                 {
                     return node["id"]!.InnerText;
                 }

@@ -29,15 +29,19 @@ public class YoutubeMusicService : DataService
         if (result?.Length == 0) return new SearchResult();
 
         var results = result!.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-        var doc = JsonDocument.Parse(results.First());
 
-        var returnResult = new SearchResult();
+        var songsDoc = JsonDocument.Parse(results.First());
+        var doc = JsonDocument.Parse(results.Skip(1).First());
 
+        var returnResult = new SearchResult()
+        {
+            Songs = ParseSongs(songsDoc)
+        };
         List<AlbumParseData> albumData;
 
         if (doc.RootElement.ValueKind == JsonValueKind.Array)
         {
-            albumData = results.Skip(2).Select(ParseAlbumData).ToList();
+            albumData = results.Skip(3).Select(ParseAlbumData).ToList();
             var doc2 = JsonDocument.Parse(results.Skip(1).First());
 
             foreach (var item in doc.RootElement.EnumerateArray())
@@ -49,6 +53,10 @@ public class YoutubeMusicService : DataService
                 if (songsData != null)
                 {
                     entity.Songs = songsData.SongParseDatas.Select(x => new Song(x.Number, x.Title, x.Duration)).ToList();
+                }
+                else
+                {
+
                 }
 
                 switch (type)
@@ -75,7 +83,7 @@ public class YoutubeMusicService : DataService
         }
         else
         {
-            albumData = results.Skip(1).Select(ParseAlbumData).ToList();
+            albumData = results.Skip(2).Select(ParseAlbumData).ToList();
 
             foreach (var item in doc.RootElement.GetProperty("albums").GetProperty("results").EnumerateArray())
             {
@@ -84,9 +92,19 @@ public class YoutubeMusicService : DataService
                 if (songsData != null)
                 {
                     entity.Songs = songsData.SongParseDatas.Select(x => new Song(x.Number, x.Title, x.Duration)).ToList();
-                }
 
-                returnResult.Albums.Add(entity);
+                    switch (songsData.Type)
+                    {
+                        case "Album": returnResult.Albums.Add(entity); break;
+                        case "EP": returnResult.EPs.Add(entity); break;
+                        case "Single": returnResult.Singles.Add(entity); break;
+                        default: returnResult.Others.Add(entity); break;
+                    }
+                }
+                else
+                {
+
+                }
             }
 
             foreach (var item in doc.RootElement.GetProperty("singles").GetProperty("results").EnumerateArray())
@@ -97,12 +115,27 @@ public class YoutubeMusicService : DataService
                 {
                     entity.Songs = songsData.SongParseDatas.Select(x => new Song(x.Number, x.Title, x.Duration)).ToList();
                 }
+                else
+                {
+
+                }
 
                 returnResult.Singles.Add(entity);
             }
         }
 
         return returnResult;
+    }
+
+    private List<Song> ParseSongs(JsonDocument songsDoc)
+    {
+        return songsDoc.RootElement
+                           .GetProperty("tracks")
+                           .EnumerateArray()
+                           .Select((x, i) => new Song(0,
+                                                      x.GetProperty("title").GetString()!,
+                                                      TimeSpan.FromSeconds(x.GetProperty("duration_seconds").GetInt32())))
+                           .ToList();
     }
 
     private AlbumParseData ParseAlbumData(string albumJson)

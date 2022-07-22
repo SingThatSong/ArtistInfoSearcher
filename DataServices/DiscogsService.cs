@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Xml.Linq;
 using DiscogsClient;
 using DiscogsClient.Internal;
+using DiscogsClient.Data.Query;
 
 namespace ArtistInfoSearcher.DataServices;
 
@@ -13,19 +14,30 @@ public class DiscogsService : DataService
 
     public override async Task<SearchResult> GetSearchResultAsyncInternal(string artistName)
     {
-        await Task.Delay(1);
-
         //Create authentication based on Discogs token
         var tokenInformation = new TokenAuthenticationInformation("zTnmUSwmJgwhJEqvYyuiCNJHFcwtvINfWANTaQcI");
         //Create discogs client using the authentication
         var discogsClient = new DiscogsClient.DiscogsClient(tokenInformation);
-        var artistSearch = discogsClient.SearchAsEnumerable(new DiscogsClient.Data.Query.DiscogsSearch() { artist = artistName, type = DiscogsClient.Data.Query.DiscogsEntityType.master }).ToList();
+        var artistSearch = await discogsClient.SearchAsync(new DiscogsSearch() 
+        { 
+            query = artistName, 
+            type = DiscogsEntityType.artist
+        });
+
+        var artistID = artistSearch?.results.FirstOrDefault(x => x.title == artistName)?.id;
+
+        if (!artistID.HasValue) return new SearchResult();
+
+        var releases = discogsClient.GetArtistReleaseAsEnumerable(artistID.Value)
+                                    .ToList()
+                                    .Where(x => x.type == "master" && x.artist != "Various" && x.role != "UnofficialRelease")
+                                    .DistinctBy(x => x.title)
+                                    .ToList();
 
         return new SearchResult()
         {
-            Others = artistSearch.Where(x => x.year.HasValue)
-                                 .Select(x => new Album(x.title.Substring($"{artistName} - ".Length), x.year!.Value))
-                                 .ToList()
+            Appearances = releases.Where(x => x.artist != artistName).Select(x => new Album(x.title, x.year)).ToList(),
+            Others = releases.Where(x => x.artist == artistName).Select(x => new Album(x.title, x.year)).ToList(),
         };
     }
 }
