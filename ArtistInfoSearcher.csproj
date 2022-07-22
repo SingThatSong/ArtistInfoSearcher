@@ -26,10 +26,10 @@
   <ItemGroup>
     <PackageReference Include="CommandDotNet" Version="7.0.1" />
     <PackageReference Include="ConsoleTableExt" Version="3.2.0" />
-    <PackageReference Include="DiscogsClient" Version="2.7.1" />
-    <PackageReference Include="KM.Yandex.Music.Api" Version="1.0.0" />
-    <PackageReference Include="MetaBrainz.MusicBrainz" Version="5.0.0" />
-    <PackageReference Include="SpotifyAPI.Web" Version="6.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SearchLib\SearchLib.csproj" />
   </ItemGroup>
 
 </Project>

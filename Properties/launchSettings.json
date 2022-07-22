@@ -2,7 +2,7 @@
   "profiles": {
     "ArtistInfoSearcher": {
       "commandName": "Project",
-      "commandLineArgs": "RequestArtist \"Dahaka\" true"
+      "commandLineArgs": "RequestArtist \"Adelitas Way\" true"
     }
   }
 }
